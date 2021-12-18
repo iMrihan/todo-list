@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        display: flex;
+        width: 90%;
+        height: 550px;
+        margin: auto;
+      }
+      #container > div {
+        width: 45%;
+        height: 100%;
+        margin: auto;
+      }
+      h1 {
+        color: #679eb3;
+        border-bottom: 1px solid grey;
+        width: 53%;
+        height: 10%;
+      }
+      form {
+        font-weight: bold;
+        color: #4b4d50;
+      }
+      select {
+        padding: 1% 30% 1% 0%;
+        font-weight: bold;
+        color: #4b4d50;
+        margin: 10px 0px;
+      }
+      #title {
+        margin: 10px 0px;
+        padding: 1% 20% 1% 0%;
+      }
+      #textarea {
+        margin: 10px 0px;
+      }
+      #price {
+        padding: 1% 20% 1% 0%;
+        margin: 10px 0px;
+      }
+      #add {
+        padding: 10px 30px;
+        margin-top: 10px;
+        color: white;
+        background-color: blue;
+        border: 0;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      th,
+      td {
+        padding: 8px 30px;
+      }
+      #pdIn {
+        border-bottom: 1px solid grey;
+        width: 118%;
+        height: 10%;
+      }
+      tr {
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+          rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+          rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftDiv">
+        <h1>Add Product</h1>
+        <form>
+          <label>Category</label>
+          <br />
+          <select id="category">
+            <option value="electronic">Electronic</option>
+            <option value="furniture">Furniture</option>
+            <option value="home appliance">Home appliance</option>
+            <option value="books">Books</option></select
+          ><br />
+          <label>Title</label><br />
+          <input type="text" id="title" /><br />
+          <label>Description</label><br />
+          <textarea name="" id="description" cols="34" rows="5"></textarea
+          ><br />
+          <label>Price</label><br />
+          <input type="number" id="price" /><br />
+          <input type="submit" value="Add" id="add" />
+        </form>
+      </div>
+      <div id="rightDiv">
+        <h1 id="pdIn">Product Info</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
+<script>
+  document.querySelector("form").addEventListener("submit", addItems);
+  var todoArr = JSON.parse(localStorage.getItem("todoData")) || [];
+  displayAll(todoArr);
+
+  function addItems(event) {
+    event.preventDefault();
+    var category = document.getElementById("category").value;
+    var title = document.getElementById("title").value;
+    var description = document.getElementById("description").value;
+    var price = document.getElementById("price").value;
+    console.log(category, title, description, price);
+
+    var objTodo = {
+      category: category,
+      title: title,
+      description: description,
+      price: price,
+    };
+
+    todoArr.push(objTodo);
+    localStorage.setItem("todoData", JSON.stringify(todoArr));
+    displayAll(todoArr);
+  }
+  var count = 0;
+  function displayAll() {
+    var count = 0;
+    document.querySelector("tbody").textContent = "";
+
+    todoArr.map(function (elem, index) {
+      var tr = document.createElement("tr");
+      var td1 = document.createElement("td");
+      count++;
+      td1.textContent = count;
+      var td2 = document.createElement("td");
+      td2.textContent = elem.category;
+      var td3 = document.createElement("td");
+      td3.textContent = elem.title;
+      var td4 = document.createElement("td");
+      td4.textContent = elem.description;
+      var td5 = document.createElement("td");
+      td5.textContent = elem.price;
+      var td6 = document.createElement("td");
+      td6.textContent = "Delete";
+      td6.addEventListener("click", function () {
+        deleteTask(index);
+      });
+      document.querySelector("tbody").append(tr);
+      tr.append(td1, td2, td3, td4, td5, td6);
+    });
+  }
+  function deleteTask(index) {
+    todoArr.splice(index, 1);
+    console.log(index);
+    localStorage.setItem("todoData", JSON.stringify(todoArr));
+    displayAll();
+  }
+</script>

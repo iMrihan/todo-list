@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      th,
+      td {
+        border: 1px solid black;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Todo List</h1>
+    <form>
+      <label>Name</label>
+      <input type="text" id="name" placeholder="enter todo" />
+      <label>Quantity</label>
+      <input type="number" id="qty" placeholder="enter qty" />
+      <label>Priority</label>
+      <select id="priority">
+        <option value="">---</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+        <input type="submit" />
+      </select>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Priority</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+</html>
+<script>
+  var tBody = document.querySelector("tbody");
+  document.querySelector("form").addEventListener("submit", addItems);
+  var todoArr = JSON.parse(localStorage.getItem("todoList")) || [];
+  createUI(todoArr);
+
+  function addItems(event) {
+    event.preventDefault();
+    var name = document.getElementById("name").value;
+    var qty = document.getElementById("qty").value;
+    var priority = document.getElementById("priority").value;
+
+    var obj = {
+      itemName: name,
+      itemQuantity: qty,
+      itemPriority: priority,
+      id: Date.now(),
+    };
+    todoArr.push(obj);
+    localStorage.setItem("todoList", JSON.stringify(todoArr));
+
+    createUI(todoArr);
+  }
+
+  function createUI(arr) {
+    tBody.innerHTML = "";
+    arr.map(function (elem) {
+      var row = document.createElement("tr");
+      var td1 = document.createElement("td");
+      td1.textContent = elem.itemName;
+      var td2 = document.createElement("td");
+      td2.textContent = elem.itemQuantity;
+      var td3 = document.createElement("td");
+      td3.textContent = elem.itemPriority;
+      var td4 = document.createElement("td");
+      td4.setAttribute("data-id", elem.id);
+      td4.setAttribute("class", "delete");
+      td4.textContent = "Delete";
+
+      row.append(td1, td2, td3, td4);
+      tBody.append(row);
+    });
+  }
+  function deleteTodo(id) {
+    // console.log("id ", id);
+    todoArr = todoArr.filter(function (todo) {
+      return todo.id !== id;
+    });
+    // console.log(todoArr);
+    localStorage.setItem("todoList", JSON.stringify(todoArr));
+
+    createUI(todoArr);
+  }
+  tBody.addEventListener("click", function (event) {
+    var target = event.target;
+    // console.log(target, target.classList.contains("delete"));
+
+    if (target.classList.contains("delete")) {
+      var id = +target.dataset.id;
+      deleteTodo(id);
+      // console.log("data ", target.dataset);
+    }
+  });
+</script>
